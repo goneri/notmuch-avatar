@@ -79,23 +79,8 @@ def get_avatar_url_from_gravatar(email):
     return avatar_url
 
 
-from lxml import html
-from pprint import pprint
-
-
-def get_domain_from_email(email):
-    domain = None
-#    try:
-    result = re.match('.*@([a-z0-9\.-]+)$', email)
-    print(result.group(1))
-    return(result.group(1))
-#    except AttributeError:
-#        print("Failed to get domain from email %s" % email)
-#        return
-
-
 def get_avatar_url_from_favico(email):
-    domain = get_domain_from_email(email)
+    domain = avatar.EmailTools.get_domain_from_email(email)
     if not domain:
         return
 
@@ -183,7 +168,7 @@ def main():
 
             if not avatar_url:
                 print("No URL for email: %s" % email)
-                domain = get_domain_from_email(email)
+                domain = avatar.EmailTools.get_domain_from_email(email)
 
                 try:
                     shutil.copyfile(

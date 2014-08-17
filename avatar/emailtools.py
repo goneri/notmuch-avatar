@@ -29,3 +29,8 @@ class EmailTools(object):
         except AttributeError:
             pass
         return result
+
+    @staticmethod
+    def get_domain_from_email(email):
+        result = re.match('.*@([a-z0-9\.-]+)$', email)
+        return(result.group(1))

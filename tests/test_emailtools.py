@@ -31,6 +31,9 @@ class TestEmailTools(testtools.TestCase):
             'roberto@foo.example  george@bob.example')
         self.assertEqual(r, ['roberto@foo.example', 'george@bob.example'])
 
+    def test_get_domain_from_email(self):
+        r = avatar.EmailTools.get_domain_from_email('goneri@lebouder.net')
+        self.assertEqual(r, 'lebouder.net')
+
 if __name__ == '__main__':
     unittest.main()
-
