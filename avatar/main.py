@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Quick and Ugly script to fetch sender avatar.
 # Copyright 2014 Gonéri Le Bouder <goneri@lebouder.net>
 #
 #        DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
