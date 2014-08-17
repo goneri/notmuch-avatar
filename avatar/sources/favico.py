@@ -18,9 +18,10 @@
 import re
 import urllib
 
-import avatar
 from lxml import html
 import requests
+
+import avatar
 
 
 class Favico(object):
@@ -41,7 +42,10 @@ class Favico(object):
 
         try:
             page = requests.get('http://www.%s' % domain)
-        except (requests.exceptions.SSLError, requests.exceptions.ConnectionError):
+        except (requests.exceptions.SSLError):
+            print('SSLError on %s' % domain)
+            return
+        except (requests.exceptions.ConnectionError):
             print('Failed to query domain %s' % domain)
             return
         tree = html.fromstring(page.text.encode(encoding='UTF-8'))

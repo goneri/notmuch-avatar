@@ -65,5 +65,3 @@ class Google(object):
             return True
         except IOError:
             print("Failed to download %s" % avatar_url)
-
-

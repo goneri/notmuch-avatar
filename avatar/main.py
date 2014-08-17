@@ -17,14 +17,12 @@
 
 import os
 import re
-import shutil
-import urllib
 
 import avatar
+import avatar.sources.favico
 import avatar.sources.google
 import avatar.sources.gravatar
 import avatar.sources.local
-import avatar.sources.favico
 
 import notmuch
 import PIL.Image
