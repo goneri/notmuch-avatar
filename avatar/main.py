@@ -39,16 +39,10 @@ def main():
     db = notmuch.Database()
     msgs = notmuch.Query(db, 'date:12months..today').search_messages()
 
-    seen = []
-
     for msg in msgs:
         for email in avatar.EmailTools.extract_email_from_string(
                 msg.get_header('From') +
                 msg.get_header('Cc')):
-
-            if email in seen:
-                continue
-            seen.append(email)
 
             if re.match('.*novalocal$', email):
                 continue
