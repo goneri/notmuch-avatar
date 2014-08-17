@@ -58,8 +58,8 @@ def main():
 
             if os.path.exists(target_image + ".lock"):
                 continue
-            else:
-                open(target_image + '.lock', 'a').close()
+
+            open(target_image + '.lock', 'a').close()
 
             print(" >%s" % email)
 
