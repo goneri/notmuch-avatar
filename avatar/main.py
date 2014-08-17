@@ -1,12 +1,11 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 # Quick and Ugly script to fetch sender avatar.
 # Copyright 2014 Gonéri Le Bouder <goneri@lebouder.net>
 #
 #        DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
 #                    Version 2, December 2004
-#
-# Copyright (C) 2004 Sam Hocevar <sam@hocevar.net>
-#
+##
 # Everyone is permitted to copy and distribute verbatim or modified
 # copies of this license document, and changing it is allowed as long
 # as the name is changed.
@@ -15,31 +14,18 @@
 #   TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
 #
 #  0. You just DO WHAT THE FUCK YOU WANT TO.
-# -*- coding: utf-8 -*-
 import hashlib
 import os
 import re
 import shutil
 import urllib
 
-import simplejson
+import avatar
 
 import notmuch
-import requests
-
 import PIL.Image
-
-
-def extract_email_from_string(string):
-    result = []
-    try:
-        for (m) in re.findall('([0-9a-zA-Z._-]+@[0-9a-zA-Z.-]+)',
-                              string):
-            result.append(m.lower())
-            m.group(1)
-    except AttributeError:
-        pass
-    return result
+import requests
+import simplejson
 
 
 def get_avatar_url_from_google(email):
@@ -163,61 +149,65 @@ def get_avatar_url_from_favico(email):
         return icon_location
 
 
-db = notmuch.Database()
-msgs = notmuch.Query(db, 'date:12months..today').search_messages()
+def main():
+    db = notmuch.Database()
+    msgs = notmuch.Query(db, 'date:12months..today').search_messages()
 
-seen = []
+    seen = []
 
-for msg in msgs:
-    for email in extract_email_from_string(
-            msg.get_header('From') +
-            msg.get_header('Cc')):
+    for msg in msgs:
+        for email in avatar.EmailTools.extract_email_from_string(
+                msg.get_header('From') +
+                msg.get_header('Cc')):
 
-        if email in seen:
-            continue
-        seen.append(email)
+            if email in seen:
+                continue
+            seen.append(email)
 
-        if re.match('.*novalocal$', email):
-            continue
-
-        target_image = "%s/.emacs.d/avatar/%s.png" % (
-            os.environ['HOME'], email)
-
-        if os.path.exists(target_image + ".lock"):
-            continue
-        else:
-            open(target_image + '.lock', 'a').close()
-
-        print(" >%s" % email)
-
-        avatar_url = get_avatar_url_from_google(email)
-        if not avatar_url:
-            avatar_url = get_avatar_url_from_gravatar(email)
-
-        if not avatar_url:
-            print("No URL for email: %s" % email)
-            domain = get_domain_from_email(email)
-
-            try:
-                shutil.copyfile(
-                    "./icons/%s.png" % domain,
-                    target_image + '.temp')
-                print("Using local icon for %s" % email)
-            except Exception:
-                avatar_url = get_avatar_url_from_favico(email)
-
-        if avatar_url:
-            print("fetching %s from %s" % (email, avatar_url))
-            try:
-                urllib.urlretrieve(avatar_url, target_image + '.temp')
-            except IOError:
-                print("Failed to download %s" % avatar_url)
+            if re.match('.*novalocal$', email):
                 continue
 
-        if os.path.exists(target_image + '.temp'):
-            img = PIL.Image.open(target_image + '.temp')
-            img_small = img.resize((64, 64), PIL.Image.ANTIALIAS)
-            img_small.save(target_image, "PNG", quality=10,
-                           optimize=True, progressive=True)
-            os.remove(target_image + '.temp')
-            os.remove(target_image + '.lock')
+            target_image = "%s/.emacs.d/avatar/%s.png" % (
+                os.environ['HOME'], email)
+
+            if os.path.exists(target_image + ".lock"):
+                continue
+            else:
+                open(target_image + '.lock', 'a').close()
+
+            print(" >%s" % email)
+
+            avatar_url = get_avatar_url_from_google(email)
+            if not avatar_url:
+                avatar_url = get_avatar_url_from_gravatar(email)
+
+            if not avatar_url:
+                print("No URL for email: %s" % email)
+                domain = get_domain_from_email(email)
+
+                try:
+                    shutil.copyfile(
+                        "./icons/%s.png" % domain,
+                        target_image + '.temp')
+                    print("Using local icon for %s" % email)
+                except Exception:
+                    avatar_url = get_avatar_url_from_favico(email)
+
+            if avatar_url:
+                print("fetching %s from %s" % (email, avatar_url))
+                try:
+                    urllib.urlretrieve(avatar_url, target_image + '.temp')
+                except IOError:
+                    print("Failed to download %s" % avatar_url)
+                    continue
+
+            if os.path.exists(target_image + '.temp'):
+                img = PIL.Image.open(target_image + '.temp')
+                img_small = img.resize((64, 64), PIL.Image.ANTIALIAS)
+                img_small.save(target_image, "PNG", quality=10,
+                               optimize=True, progressive=True)
+                os.remove(target_image + '.temp')
+                os.remove(target_image + '.lock')
+
+if __name__ == '__main__':
+    main()

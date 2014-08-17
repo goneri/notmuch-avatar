@@ -1,0 +1,4 @@
+notmuch
+PIL
+requests
+simplejson
