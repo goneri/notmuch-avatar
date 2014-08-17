@@ -67,15 +67,15 @@ def main():
             for source in sources:
                 print("Fetching using %s" % source.name)
                 if source.fetch(email, target_image + '.temp') is True:
+                    # Resizing the image
+                    img = PIL.Image.open(target_image + '.temp')
+                    img_small = img.resize((64, 64), PIL.Image.ANTIALIAS)
+                    img_small.save(target_image, "PNG", quality=10,
+                                   optimize=True, progressive=True)
+                    os.remove(target_image + '.temp')
+                    os.remove(target_image + '.lock')
                     break
 
-            if os.path.exists(target_image + '.temp'):
-                img = PIL.Image.open(target_image + '.temp')
-                img_small = img.resize((64, 64), PIL.Image.ANTIALIAS)
-                img_small.save(target_image, "PNG", quality=10,
-                               optimize=True, progressive=True)
-                os.remove(target_image + '.temp')
-                os.remove(target_image + '.lock')
 
 if __name__ == '__main__':
     main()
