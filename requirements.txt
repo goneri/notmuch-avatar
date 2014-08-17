@@ -1,4 +1,4 @@
 notmuch
-PIL
+Pillow
 requests
 simplejson
