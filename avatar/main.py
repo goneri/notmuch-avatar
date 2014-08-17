@@ -22,6 +22,7 @@ import urllib
 
 import avatar
 
+from lxml import html
 import notmuch
 import PIL.Image
 import requests
