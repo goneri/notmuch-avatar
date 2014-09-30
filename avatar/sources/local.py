@@ -30,9 +30,11 @@ class Local(object):
 
         icon_file = "./icons/%s.png" % domain
 
-        if os.file.exists(icon_file):
+        try:
             shutil.copyfile(
                 icon_file,
-                target_image + '.temp')
+                target_image)
             print("Using local icon for %s" % email)
             return True
+        except IOError:
+            return False

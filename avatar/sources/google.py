@@ -55,13 +55,16 @@ class Google(object):
         avatar_url = json['entry']['gphoto$thumbnail']['$t']
 
         size_of_empty_avatar = '1223'
-        content_length = requests.head(avatar_url).headers['content-length']
+        try:
+            content_length = requests.head(avatar_url).headers['content-length']
+        except requests.exceptions.ConnectionError:
+            return None
         if content_length == size_of_empty_avatar:
             return None
 
         print("fetching %s from %s" % (email, avatar_url))
         try:
-            urllib.urlretrieve(avatar_url, target_image + '.temp')
+            urllib.urlretrieve(avatar_url, target_image)
             return True
         except IOError:
             print("Failed to download %s" % avatar_url)

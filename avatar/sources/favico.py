@@ -19,6 +19,7 @@ import re
 import urllib
 
 from lxml import html
+import lxml
 import requests
 
 import avatar
@@ -41,13 +42,17 @@ class Favico(object):
             return
 
         try:
-            page = requests.get('http://www.%s' % domain)
-        except (requests.exceptions.SSLError):
+            page = requests.get(('http://www.%s' % domain), timeout=10)
+        except requests.exceptions.SSLError:
             print('SSLError on %s' % domain)
             return
-        except (requests.exceptions.ConnectionError):
+        except requests.exceptions.ConnectionError:
             print('Failed to query domain %s' % domain)
             return
+        except requests.exceptions.Timeout:
+            print('Timeout on domain %s' % domain)
+            return
+
         tree = html.fromstring(page.text.encode(encoding='UTF-8'))
 
         def get_raw_icon_location():
@@ -77,18 +82,19 @@ class Favico(object):
             return
 
         print(raw_icon_location)
+        icon_location = ""
         if re.match('^//.*', raw_icon_location):
             icon_location = "http:%s" % raw_icon_location
-        elif re.match('^/.*', icon_location):
+        elif re.match('^/.*', raw_icon_location):
             icon_location = "http://%s%s" % (domain, raw_icon_location)
-        elif not re.match('^http.*', icon_location):
+        elif not re.match('^http.*', raw_icon_location):
             icon_location = "http://%s/%s" % (domain, raw_icon_location)
         else:
             icon_location = raw_icon_location
 
         print("fetching %s from %s" % (email, icon_location))
         try:
-            urllib.urlretrieve(icon_location, target_image + '.temp')
+            urllib.urlretrieve(icon_location, target_image)
             return True
         except IOError:
             print("Failed to download %s" % icon_location)

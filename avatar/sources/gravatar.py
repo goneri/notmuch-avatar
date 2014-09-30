@@ -32,15 +32,17 @@ class Gravatar(object):
         avatar_url += hashlib.md5(email.lower()).hexdigest() + "?"
         avatar_url += urllib.urlencode({'s': str(size)})
 
-        size_of_empty_avatar = '2174'
+        size_of_empty_avatar = ['2174', '2197']
         content_length = requests.head(avatar_url).headers['content-length']
+	print("content_length:%s " % content_length)
 
-        if content_length == size_of_empty_avatar:
+        if content_length in size_of_empty_avatar:
             return None
 
-        print("fetching %s from %s" % (email, avatar_url))
+        print("fetching %s from %s to %s" % (email, avatar_url, target_image))
         try:
-            urllib.urlretrieve(avatar_url, target_image + '.temp')
+            urllib.urlretrieve(avatar_url, target_image)
             return True
         except IOError:
             print("Failed to download %s" % avatar_url)
+            return None
