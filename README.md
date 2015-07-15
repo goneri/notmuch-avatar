@@ -17,11 +17,9 @@ Avaratar can be downloaded from:
 
 ### The patch
 
-    diff --git a/emacs/notmuch-show.el b/emacs/notmuch-show.el
-    index 529baa9..7456d8e 100644
-    --- a/emacs/notmuch-show.el
-    +++ b/emacs/notmuch-show.el
-    @@ -947,6 +947,12 @@ useful for quoting in replies)."
+    --- ./.cask/24.5.1/elpa/notmuch-20150630.1237/notmuch-show.el.orig      2015-07-15 10:45:49.978866133 +0200
+    +++ ./.cask/24.5.1/elpa/notmuch-20150630.1237/notmuch-show.el   2015-07-15 10:45:55.526940940 +0200
+    @@ -1011,6 +1011,12 @@
              headers-start headers-end
              (bare-subject (notmuch-show-strip-re (plist-get headers :Subject))))
      
